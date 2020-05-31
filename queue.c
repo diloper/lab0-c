@@ -184,8 +184,38 @@ void q_reverse(queue_t *q)
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
+
+
 void q_sort(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || q->size < 2)
+        return;
+    q->head = q_list_sort(q, q->head);
+}
+
+list_ele_t *q_list_sort(queue_t *q, list_ele_t *head)
+{
+    if (!head || !head->next)
+        return head;
+    list_ele_t *right = head->next;
+    list_ele_t *left = head;
+    // split
+    while (right && right->next) {
+        left = left->next;
+        right = right->next->next;
+    }
+    right = left->next;
+    left->next = NULL;
+
+    // recursive
+    list_ele_t *l1 = q_list_sort(q, right);
+    list_ele_t *l2 = q_list_sort(q, left);
+
+
+
+    return merge(l1, l2);
+}
+list_ele_t *merge(list_ele_t *l1, list_ele_t *l2)
+{
+    return l1;
 }
