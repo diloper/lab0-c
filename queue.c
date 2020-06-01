@@ -184,22 +184,23 @@ void q_reverse(queue_t *q)
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
-
-
 void q_sort(queue_t *q)
 {
     if (!q || q->size < 2)
         return;
-    q->head = q_list_sort(q, q->head);
+    q->head = q_merge_sort(q, q->head);
 }
-
-list_ele_t *q_list_sort(queue_t *q, list_ele_t *head)
+list_ele_t *q_merge_sort(queue_t *q, list_ele_t *head)
 {
-    if (!head || !head->next)
+    if (!head)
+        return NULL;
+    if (!head->next)
         return head;
+
     list_ele_t *right = head->next;
     list_ele_t *left = head;
-    // split
+
+    // --split--
     while (right && right->next) {
         left = left->next;
         right = right->next->next;
@@ -207,15 +208,25 @@ list_ele_t *q_list_sort(queue_t *q, list_ele_t *head)
     right = left->next;
     left->next = NULL;
 
-    // recursive
-    list_ele_t *l1 = q_list_sort(q, right);
-    list_ele_t *l2 = q_list_sort(q, left);
+    // --recursive--
+    list_ele_t *l1 = q_merge_sort(q, head);
+    list_ele_t *l2 = q_merge_sort(q, right);
 
+    //-- merge --
+    list_ele_t merge;
+    list_ele_t *list = &merge;
 
+    while (l1 && l2) {
+        if (strcmp(l1->value, l2->value) <= 0) {
+            list->next = l1;
+            l1 = l1->next;
+        } else {
+            list->next = l2;
+            l2 = l2->next;
+        }
+        list = list->next;
+    }
 
-    return merge(l1, l2);
-}
-list_ele_t *merge(list_ele_t *l1, list_ele_t *l2)
-{
-    return l1;
+    q->tail = list->next = l1 ? l1 : l2;
+    return merge.next;
 }
