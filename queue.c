@@ -191,9 +191,12 @@ void q_sort(queue_t *q)
     if (!q || q->head == q->tail)
         return;
     q->head = q_merge_sort(q, q->head);
-    while (q->tail->next) {
-        q->tail = q->tail->next;
-    }
+    /* Method 1 :Update q->tail
+     */
+
+    //    while (q->tail->next) {
+    //        q->tail = q->tail->next;
+    //    }
 }
 list_ele_t *q_merge_sort(queue_t *q, list_ele_t *head)
 {
@@ -233,7 +236,9 @@ list_ele_t *q_merge_sort(queue_t *q, list_ele_t *head)
     }
 
     list->next = l1 ? l1 : l2;
-    // q->tail = list->next = l1 ? l1 : l2;
-    // head = merge.next;
+    /* Method 2:Update q->tail
+     */
+    for (; list; list = list->next)
+        q->tail = list;
     return merge.next;
 }
